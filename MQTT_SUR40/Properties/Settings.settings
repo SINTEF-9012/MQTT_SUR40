@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DataVisualizer.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="MQTT_Message_Broker" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">192.168.1.6</Value>
+    </Setting>
+    <Setting Name="MQTT_Client_ID" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">MQTT_SUR40</Value>
+    </Setting>
+    <Setting Name="MQTT_Message_Broker_Port" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2883</Value>
+    </Setting>
+    <Setting Name="MQTT_Topic" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SUR40/</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
