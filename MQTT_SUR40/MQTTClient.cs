@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using DataVisualizer.Properties;
 using Newtonsoft.Json;
 using uPLibrary.Networking.M2Mqtt;
@@ -40,10 +41,20 @@ namespace MQTT_SUR40
         {
             if (!_mqttClient.IsConnected) return;
 
-            var json = JsonConvert.SerializeObject(message);
-            var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+            Task.Run(() =>
+            {
+                var json = JsonConvert.SerializeObject(
+                    message,
+                    Formatting.None,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    });
 
-            _mqttClient.Publish(Settings.Default.MQTT_Topic + message.Id, bytes, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, false);
+                var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+
+                _mqttClient.Publish(Settings.Default.MQTT_Topic + message.Id, bytes, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, false);
+            });
         }
 
         public String Status()

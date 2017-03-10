@@ -82,12 +82,12 @@ namespace DataVisualizer
                 Id = touchDevice.Id,
                 Type = GetTouchDeviceTypeString(touchDevice),
 
-                X = position.X,
-                Y = position.Y,
-                Orientation = touchDeviceOrientation ?? 0.0,
+                X = Math.Round(position.X, 2),
+                Y = Math.Round(position.Y, 2),
+                Orientation = Math.Round(touchDeviceOrientation ?? 0.0, 2),
 
-                Width = touchDeviceRect.Width,
-                Height = touchDeviceRect.Height
+                Width = Math.Round(touchDeviceRect.Width, 2),
+                Height = Math.Round(touchDeviceRect.Height, 2)
             };
 
             if (touchDevice.GetTagData() != TagData.None)
