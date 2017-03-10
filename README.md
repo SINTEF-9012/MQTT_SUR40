@@ -9,6 +9,8 @@ The messages are published on the topic `SUR40/{Id}` by default. Subscribe to `S
 
 When a touch input is finished/removed, a new *empty* message is published on `SUR40/{Id}`.
 
+All the messages are non persistent and the quality of service (QOS) is 1 (at least once).
+
 ```json
 {
     "Id": 16842750,
