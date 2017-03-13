@@ -1,7 +1,11 @@
 # MQTT_SUR40
-Broadcast input events from a PixelSense table (SUR40) to a MQTT message broker.
+Broadcast input events from a PixelSense table (SUR40) to a MQTT message broker and to UDP.
 
 ![Schema](https://cloud.githubusercontent.com/assets/45740/23794427/b90384e2-0598-11e7-92a9-cb9c8d329442.png)
+
+## MQTT and UDP
+
+The first idea was to use MQTT, but it's to slow. So the second thought was about using UDP. It's still too slow, but it's better.
 
 ## Documentation
 
@@ -49,6 +53,20 @@ All the messages are non persistent and the quality of service (QOS) is 1 (at le
     "TagExtendedValue": "0000000000000000",
     "TagValue": "0000000000026773"
 }
+```
+
+### UDP format
+
+The UDP format is in binary, and the endianess is the same as the surface table. It doesn't contain tag data yet, and when a touch is finished/ended, only the int32 id is sent.
+
+```c
+struct SUR40_DataFormat {
+	int32 Id;
+	float X;
+	float Y;
+	float Orientation;
+	char Type;
+};
 ```
 
 ## How to display an external video input while still receiving touch input events
