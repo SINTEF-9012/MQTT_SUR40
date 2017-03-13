@@ -25,7 +25,7 @@ namespace DataVisualizer.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.6")]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.21")]
         public string MQTT_Message_Broker {
             get {
                 return ((string)(this["MQTT_Message_Broker"]));
@@ -62,6 +62,42 @@ namespace DataVisualizer.Properties {
             }
             set {
                 this["MQTT_Topic"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2773")]
+        public int UDP_Port {
+            get {
+                return ((int)(this["UDP_Port"]));
+            }
+            set {
+                this["UDP_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.5.1")]
+        public string UDP_IP {
+            get {
+                return ((string)(this["UDP_IP"]));
+            }
+            set {
+                this["UDP_IP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MQTT_Mode {
+            get {
+                return ((bool)(this["MQTT_Mode"]));
+            }
+            set {
+                this["MQTT_Mode"] = value;
             }
         }
     }

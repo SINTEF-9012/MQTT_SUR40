@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using DataVisualizer.Properties;
 using Newtonsoft.Json;
@@ -12,34 +15,84 @@ namespace MQTT_SUR40
         private static MQTTClient _instance;
         
         private readonly MqttClient _mqttClient;
+        private readonly UdpClient _udpClient;
+
+        private readonly IPEndPoint _ipEndPoint;
 
         private MQTTClient()
         {
-            
-            _mqttClient = new MqttClient(Settings.Default.MQTT_Message_Broker,
-                Settings.Default.MQTT_Message_Broker_Port,
-                false, null, null, MqttSslProtocols.None);
+
+            if (Settings.Default.MQTT_Mode)
+            {
+                _mqttClient = new MqttClient(Settings.Default.MQTT_Message_Broker,
+                    Settings.Default.MQTT_Message_Broker_Port,
+                    false, null, null, MqttSslProtocols.None);
+            }
+
+            _udpClient = new UdpClient();
+            _ipEndPoint = new IPEndPoint(IPAddress.Parse(Settings.Default.UDP_IP), Settings.Default.UDP_Port);
+
+        }
+
+        private static byte[] Combine(params byte[][] arrays)
+        {
+            byte[] ret = new byte[arrays.Sum(x => x.Length)];
+            int offset = 0;
+            foreach (byte[] data in arrays)
+            {
+                Buffer.BlockCopy(data, 0, ret, offset, data.Length);
+                offset += data.Length;
+            }
+            return ret;
         }
 
         public void Connect()
         {
-            _mqttClient.Connect(Settings.Default.MQTT_Client_ID);
+            if (_mqttClient != null)
+                _mqttClient.Connect(Settings.Default.MQTT_Client_ID);
         }
 
         public void Disconnect()
         {
-            try
+            if (_mqttClient != null)
             {
-                _mqttClient.Disconnect();
+                try
+                {
+                    _mqttClient.Disconnect();
+                }
+                catch
+                {
+                }
             }
-            catch
-            {
-            }
+
         }
 
         public void PublishMessage(MQTT_SUR40_Message message)
         {
-            if (!_mqttClient.IsConnected) return;
+            var bytesId = BitConverter.GetBytes(message.Id);
+            char type = 'u';
+            switch (message.Type)
+            {
+                case "Tag":
+                    type = 't';
+                    break;
+                case "Finger":
+                    type = 'f';
+                    break;
+                case "Blob":
+                    type = 'b';
+                    break;
+            }
+            var bytesType = BitConverter.GetBytes(type);
+
+            var bytesX = BitConverter.GetBytes((float)message.X);
+            var bytesY = BitConverter.GetBytes((float)message.Y);
+            var bytesOrientation = BitConverter.GetBytes((float)message.Orientation);
+
+            byte[] binaryMessage = Combine(bytesId, bytesX, bytesY, bytesOrientation, bytesType);
+            _udpClient.SendAsync(binaryMessage, binaryMessage.Length, _ipEndPoint);
+
+            if (_mqttClient == null || !_mqttClient.IsConnected) return;
 
             Task.Run(() =>
             {
@@ -69,8 +122,14 @@ namespace MQTT_SUR40
 
         public void RemoveTag(int id)
         {
+            var bytesId = BitConverter.GetBytes(id);
+            _udpClient.SendAsync(bytesId, bytesId.Length, _ipEndPoint);
 
-            _mqttClient.Publish(Settings.Default.MQTT_Topic + id,new byte[]{} , MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, false);
+            if (_mqttClient != null)
+            {
+                _mqttClient.Publish(Settings.Default.MQTT_Topic + id,new byte[]{} , MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, false);
+            }
+
         }
     }
 }
